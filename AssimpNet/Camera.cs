@@ -226,6 +226,21 @@ namespace Assimp
             m_name = String.Empty;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Camera"/> class.
+        /// </summary>
+        public Camera(string mName, Vector3D mPosition, Vector3D mUp, Vector3D mDirection, float mFieldOfView, float mClipPlaneNear, float mClipPlaneFar, float mAspectRatio)
+        {
+            m_name = mName;
+            m_position = mPosition;
+            m_up = mUp;
+            m_direction = mDirection;
+            m_fieldOfView = mFieldOfView;
+            m_clipPlaneNear = mClipPlaneNear;
+            m_clipPlaneFar = mClipPlaneFar;
+            m_aspectRatio = mAspectRatio;
+        }
+
         #region IMarshalable Implementation
 
         /// <summary>
