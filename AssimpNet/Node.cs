@@ -54,6 +54,17 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Gets list of all meshes.
+        /// </summary>
+        public List<int> Meshes
+        {
+            get
+            {
+                return m_meshes;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the transformation of the node relative to its parent.
         /// </summary>
         public Matrix4x4 Transform
