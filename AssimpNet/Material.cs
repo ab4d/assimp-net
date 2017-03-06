@@ -985,6 +985,19 @@ namespace Assimp
             if(String.IsNullOrEmpty(baseName))
                 return String.Empty;
 
+            // Check if baseName is already fullyQualified name
+            if (baseName.Contains(","))
+            {
+                string[] nameParameters = baseName.Split(new char[] { ',' });
+                if (nameParameters.Length == 3 &&
+                    nameParameters[1] == ((int)texType).ToString() &&
+                    nameParameters[2] == texIndex.ToString())
+                {
+                    // Already fully qualified name
+                    return baseName;
+                }
+            }
+
             return String.Format("{0},{1},{2}", baseName, (int) texType, texIndex);
         }
 
