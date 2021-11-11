@@ -633,6 +633,7 @@ namespace Assimp
             nativeValue.Faces = IntPtr.Zero;
             nativeValue.Colors = new AiMeshColorArray();
             nativeValue.TextureCoords = new AiMeshTextureCoordinateArray();
+            nativeValue.TextureCoordsNames = IntPtr.Zero;
             nativeValue.NumUVComponents = new AiMeshUVComponentArray();
             nativeValue.PrimitiveTypes = m_primitiveType;
             nativeValue.MaterialIndex = (uint) m_materialIndex;
@@ -640,8 +641,10 @@ namespace Assimp
             nativeValue.NumBones = (uint) BoneCount;
             nativeValue.NumFaces = (uint) FaceCount;
             nativeValue.NumAnimMeshes = (uint) MeshAnimationAttachmentCount;
+            nativeValue.Method = (uint) 0;
+            nativeValue.AABB = new AiAABB();
 
-            if(nativeValue.NumVertices > 0)
+            if (nativeValue.NumVertices > 0)
             {
 
                 //Since we can have so many buffers of Vector3D with same length, lets re-use a buffer
@@ -708,74 +711,70 @@ namespace Assimp
                 nativeValue.AnimMeshes = MemoryHelper.ToNativeArray<MeshAnimationAttachment, AiAnimMesh>(m_meshAttachments.ToArray());
         }
 
-        /// <summary>
-        /// Reads the unmanaged data from the native value.
-        /// </summary>
-        /// <param name="nativeValue">Input native value</param>
         void IMarshalable<Mesh, AiMesh>.FromNative(ref AiMesh nativeValue)
         {
             ClearBuffers();
 
-            int vertexCount = (int) nativeValue.NumVertices;
+            int vertexCount = (int)nativeValue.NumVertices;
             m_name = nativeValue.Name.GetString();
-            m_materialIndex = (int) nativeValue.MaterialIndex;
+            m_materialIndex = (int)nativeValue.MaterialIndex;
 
             //Load Per-vertex components
-            if(vertexCount > 0)
+            if (vertexCount > 0)
             {
 
                 //Positions
-                if(nativeValue.Vertices != IntPtr.Zero)
+                if (nativeValue.Vertices != IntPtr.Zero)
                     m_vertices.AddRange(MemoryHelper.FromNativeArray<Vector3D>(nativeValue.Vertices, vertexCount));
 
                 //Normals
-                if(nativeValue.Normals != IntPtr.Zero)
+                if (nativeValue.Normals != IntPtr.Zero)
                     m_normals.AddRange(MemoryHelper.FromNativeArray<Vector3D>(nativeValue.Normals, vertexCount));
 
                 //Tangents
-                if(nativeValue.Tangents != IntPtr.Zero)
+                if (nativeValue.Tangents != IntPtr.Zero)
                     m_tangents.AddRange(MemoryHelper.FromNativeArray<Vector3D>(nativeValue.Tangents, vertexCount));
 
                 //BiTangents
-                if(nativeValue.BiTangents != IntPtr.Zero)
+                if (nativeValue.BiTangents != IntPtr.Zero)
                     m_bitangents.AddRange(MemoryHelper.FromNativeArray<Vector3D>(nativeValue.BiTangents, vertexCount));
 
                 //Vertex Color channels
-                for(int i = 0; i < nativeValue.Colors.Length; i++)
+                for (int i = 0; i < nativeValue.Colors.Length; i++)
                 {
                     IntPtr colorPtr = nativeValue.Colors[i];
 
-                    if(colorPtr != IntPtr.Zero)
+                    if (colorPtr != IntPtr.Zero)
                         m_colors[i].AddRange(MemoryHelper.FromNativeArray<Color4D>(colorPtr, vertexCount));
                 }
 
                 //Texture coordinate channels
-                for(int i = 0; i < nativeValue.TextureCoords.Length; i++)
+                for (int i = 0; i < nativeValue.TextureCoords.Length; i++)
                 {
                     IntPtr texCoordsPtr = nativeValue.TextureCoords[i];
 
-                    if(texCoordsPtr != IntPtr.Zero)
+                    if (texCoordsPtr != IntPtr.Zero)
                         m_texCoords[i].AddRange(MemoryHelper.FromNativeArray<Vector3D>(texCoordsPtr, vertexCount));
                 }
 
                 //UV components for each tex coordinate channel
-                for(int i = 0; i < nativeValue.NumUVComponents.Length; i++)
+                for (int i = 0; i < nativeValue.NumUVComponents.Length; i++)
                 {
-                    m_texComponentCount[i] = (int) nativeValue.NumUVComponents[i];
+                    m_texComponentCount[i] = (int)nativeValue.NumUVComponents[i];
                 }
             }
 
             //Faces
-            if(nativeValue.NumFaces > 0 && nativeValue.Faces != IntPtr.Zero)
-                m_faces.AddRange(MemoryHelper.FromNativeArray<Face, AiFace>(nativeValue.Faces, (int) nativeValue.NumFaces));
+            if (nativeValue.NumFaces > 0 && nativeValue.Faces != IntPtr.Zero)
+                m_faces.AddRange(MemoryHelper.FromNativeArray<Face, AiFace>(nativeValue.Faces, (int)nativeValue.NumFaces));
 
             //Bones
-            if(nativeValue.NumBones > 0 && nativeValue.Bones != IntPtr.Zero)
-                m_bones.AddRange(MemoryHelper.FromNativeArray<Bone, AiBone>(nativeValue.Bones, (int) nativeValue.NumBones, true));
+            if (nativeValue.NumBones > 0 && nativeValue.Bones != IntPtr.Zero)
+                m_bones.AddRange(MemoryHelper.FromNativeArray<Bone, AiBone>(nativeValue.Bones, (int)nativeValue.NumBones, true));
 
             //Attachment meshes
-            if(nativeValue.NumAnimMeshes > 0 && nativeValue.AnimMeshes != IntPtr.Zero)
-                m_meshAttachments.AddRange(MemoryHelper.FromNativeArray<MeshAnimationAttachment, AiAnimMesh>(nativeValue.AnimMeshes, (int) nativeValue.NumAnimMeshes, true));
+            if (nativeValue.NumAnimMeshes > 0 && nativeValue.AnimMeshes != IntPtr.Zero)
+                m_meshAttachments.AddRange(MemoryHelper.FromNativeArray<MeshAnimationAttachment, AiAnimMesh>(nativeValue.AnimMeshes, (int)nativeValue.NumAnimMeshes, true));
         }
 
         /// <summary>

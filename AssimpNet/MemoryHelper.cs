@@ -25,6 +25,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Reflection;
+using Assimp.Unmanaged;
 
 namespace Assimp
 {

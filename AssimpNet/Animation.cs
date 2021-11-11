@@ -98,9 +98,8 @@ namespace Assimp {
         /// Gets the node animation channels.
         /// </summary>
         public List<NodeAnimationChannel> NodeAnimationChannels {
-            get {
-                return m_nodeChannels;
-            }
+            get { return m_nodeChannels; }
+            set { m_nodeChannels = value; }
         }
 
         /// <summary>
@@ -161,15 +160,18 @@ namespace Assimp {
             nativeValue.TicksPerSecond = m_ticksPerSecond;
             nativeValue.NumChannels = (uint) NodeAnimationChannelCount;
             nativeValue.NumMeshChannels = (uint) MeshAnimationChannelCount;
+            nativeValue.NumMorphMeshChannels = 0;
             nativeValue.Channels = IntPtr.Zero;
             nativeValue.MeshChannels = IntPtr.Zero;
+            nativeValue.MorphMeshChannels = IntPtr.Zero;
 
-            if(nativeValue.NumChannels > 0)
+            if (nativeValue.NumChannels > 0)
                 nativeValue.Channels = MemoryHelper.ToNativeArray<NodeAnimationChannel, AiNodeAnim>(m_nodeChannels.ToArray(), true);
 
             if(nativeValue.NumMeshChannels > 0)
                 nativeValue.MeshChannels = MemoryHelper.ToNativeArray<MeshAnimationChannel, AiMeshAnim>(m_meshChannels.ToArray(), true);
         }
+
 
         /// <summary>
         /// Reads the unmanaged data from the native value.

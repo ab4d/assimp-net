@@ -45,9 +45,13 @@ namespace Assimp.Sample
         {
             Title = "Quack! - AssimpNet Simple OpenGL Sample";
 
-            String fileName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "duck.dae");
+            //String fileName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "duck.dae");
+            String fileName = @"E:\my 3d objects\models with polygons\box with embedded texture 2017.FBX";
 
             AssimpContext importer = new AssimpContext();
+
+            Title += " v" + Assimp.Unmanaged.AssimpLibrary.Instance.GetVersionAsVersion();
+
             importer.SetConfig(new NormalSmoothingAngleConfig(66.0f));
             m_model = importer.ImportFile(fileName, PostProcessPreset.TargetRealTimeMaximumQuality);
             ComputeBoundingBox();

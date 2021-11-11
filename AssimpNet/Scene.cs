@@ -370,6 +370,7 @@ namespace Assimp
             nativeValue.Cameras = IntPtr.Zero;
             nativeValue.Textures = IntPtr.Zero;
             nativeValue.Animations = IntPtr.Zero;
+            nativeValue.MetaData = IntPtr.Zero;
             nativeValue.PrivateData = IntPtr.Zero;
 
             nativeValue.NumMaterials = (uint) MaterialCount;
@@ -427,8 +428,8 @@ namespace Assimp
                 m_rootNode = MemoryHelper.FromNativePointer<Node, AiNode>(nativeValue.RootNode);
 
             //Read meshes
-            if(nativeValue.NumMeshes > 0 && nativeValue.Meshes != IntPtr.Zero)
-                m_meshes.AddRange(MemoryHelper.FromNativeArray<Mesh, AiMesh>(nativeValue.Meshes, (int) nativeValue.NumMeshes, true));
+            if (nativeValue.NumMeshes > 0 && nativeValue.Meshes != IntPtr.Zero)
+                m_meshes.AddRange(MemoryHelper.FromNativeArray<Mesh, AiMesh>(nativeValue.Meshes, (int)nativeValue.NumMeshes, true));
 
             //Read lights
             if(nativeValue.NumLights > 0 && nativeValue.Lights != IntPtr.Zero)

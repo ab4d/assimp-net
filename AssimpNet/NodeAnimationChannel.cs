@@ -68,7 +68,7 @@ namespace Assimp
         {
             get
             {
-                return m_positionKeys.Count;
+                return m_positionKeys == null ? 0 : m_positionKeys.Count;
             }
         }
 
@@ -79,7 +79,7 @@ namespace Assimp
         {
             get
             {
-                return m_positionKeys.Count > 0;
+                return m_positionKeys == null ? false : m_positionKeys.Count > 0;
             }
         }
 
@@ -90,10 +90,8 @@ namespace Assimp
         /// </summary>
         public List<VectorKey> PositionKeys
         {
-            get
-            {
-                return m_positionKeys;
-            }
+            get { return m_positionKeys; }
+            set { m_positionKeys = value; }
         }
 
         /// <summary>
@@ -103,7 +101,7 @@ namespace Assimp
         {
             get
             {
-                return m_rotationKeys.Count;
+                return m_rotationKeys == null ? 0 : m_rotationKeys.Count;
             }
         }
 
@@ -114,7 +112,7 @@ namespace Assimp
         {
             get
             {
-                return m_rotationKeys.Count > 0;
+                return m_rotationKeys == null ? false : m_rotationKeys.Count > 0;
             }
         }
 
@@ -125,10 +123,8 @@ namespace Assimp
         /// </summary>
         public List<QuaternionKey> RotationKeys
         {
-            get
-            {
-                return m_rotationKeys;
-            }
+            get { return m_rotationKeys; }
+            set { m_rotationKeys = value; }
         }
 
         /// <summary>
@@ -138,7 +134,7 @@ namespace Assimp
         {
             get
             {
-                return m_scalingKeys.Count;
+                return m_scalingKeys == null ? 0 : m_scalingKeys.Count;
             }
         }
 
@@ -149,7 +145,7 @@ namespace Assimp
         {
             get
             {
-                return m_scalingKeys.Count > 0;
+                return m_scalingKeys == null ? false : m_scalingKeys.Count > 0;
             }
         }
 
@@ -160,10 +156,8 @@ namespace Assimp
         /// </summary>
         public List<VectorKey> ScalingKeys
         {
-            get
-            {
-                return m_scalingKeys;
-            }
+            get { return m_scalingKeys; }
+            set { m_scalingKeys = value; }
         }
 
         /// <summary>
@@ -237,22 +231,23 @@ namespace Assimp
             nativeValue.PositionKeys = IntPtr.Zero;
 
             if(nativeValue.NumPositionKeys > 0)
-                MemoryHelper.ToNativeArray<VectorKey>(m_positionKeys.ToArray());
+                nativeValue.PositionKeys = MemoryHelper.ToNativeArray<VectorKey>(m_positionKeys.ToArray());
 
 
             nativeValue.NumRotationKeys = (uint) m_rotationKeys.Count;
             nativeValue.RotationKeys = IntPtr.Zero;
 
             if(nativeValue.NumRotationKeys > 0)
-                MemoryHelper.ToNativeArray<QuaternionKey>(m_rotationKeys.ToArray());
+                nativeValue.RotationKeys = MemoryHelper.ToNativeArray<QuaternionKey>(m_rotationKeys.ToArray());
 
 
             nativeValue.NumScalingKeys = (uint) m_scalingKeys.Count;
             nativeValue.ScalingKeys = IntPtr.Zero;
 
             if(nativeValue.NumScalingKeys > 0)
-                MemoryHelper.ToNativeArray<VectorKey>(m_scalingKeys.ToArray());
+                nativeValue.ScalingKeys = MemoryHelper.ToNativeArray<VectorKey>(m_scalingKeys.ToArray());
         }
+
 
         /// <summary>
         /// Reads the unmanaged data from the native value.

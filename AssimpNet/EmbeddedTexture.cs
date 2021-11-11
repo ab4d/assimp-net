@@ -158,6 +158,11 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Texture original filename
+        /// </summary>
+        public string FileName { get; private set; }
+
+        /// <summary>
         /// Constructs a new instance of the <see cref="EmbeddedTexture"/> class. Should use only if
         /// reading from a native value.
         /// </summary>
@@ -223,16 +228,16 @@ namespace Assimp
         /// <param name="nativeValue">Output native value</param>
         void IMarshalable<EmbeddedTexture, AiTexture>.ToNative(IntPtr thisPtr, out AiTexture nativeValue)
         {
-            if(IsCompressed)
+            nativeValue.FileName = new AiString(this.FileName);
+
+            if (IsCompressed)
             {
                 nativeValue.Width = (uint) CompressedDataSize;
                 nativeValue.Height = 0;
                 nativeValue.Data = IntPtr.Zero;
 
-                if(CompressedDataSize > 0)
+                if (CompressedDataSize > 0)
                     nativeValue.Data = MemoryHelper.ToNativeArray<byte>(m_compressedData);
-
-                nativeValue.SetFormatHint(m_compressedFormatHint);
             }
             else
             {
@@ -240,11 +245,11 @@ namespace Assimp
                 nativeValue.Height = (uint) m_height;
                 nativeValue.Data = IntPtr.Zero;
 
-                if(NonCompressedDataSize > 0)
+                if (NonCompressedDataSize > 0)
                     nativeValue.Data = MemoryHelper.ToNativeArray<Texel>(m_nonCompressedData);
-
-                nativeValue.SetFormatHint(null);
             }
+
+            nativeValue.SetFormatHint(m_compressedFormatHint);
         }
 
         /// <summary>
@@ -255,22 +260,22 @@ namespace Assimp
         {
             m_isCompressed = nativeValue.Height == 0;
 
-            if(IsCompressed)
+            FileName = nativeValue.FileName.GetString();
+            m_compressedFormatHint = nativeValue.GetFormatHint();
+
+            if (IsCompressed)
             {
                 m_width = 0;
                 m_height = 0;
                 m_nonCompressedData = null;
                 m_compressedData = null;
 
-                if(nativeValue.Width > 0 && nativeValue.Data != IntPtr.Zero)
+                if (nativeValue.Width > 0 && nativeValue.Data != IntPtr.Zero)
                     m_compressedData = MemoryHelper.FromNativeArray<byte>(nativeValue.Data, (int) nativeValue.Width);
-
-                m_compressedFormatHint = nativeValue.GetFormatHint();
             }
             else
             {
                 m_compressedData = null;
-                m_compressedFormatHint = null;
                 m_nonCompressedData = null;
 
                 m_width = (int) nativeValue.Width;

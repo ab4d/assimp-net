@@ -268,6 +268,26 @@ namespace Assimp.Unmanaged
         }
 
         /// <summary>
+        /// Imports a scene from memory. This uses the "aiImportFileFromMemory" function.
+        /// It is up to the caller to dispose/unlock the memory after import.
+        /// </summary>
+        /// <param name="buffer">Pointer to memory location</param>
+        /// <param name="length">Length of buffer in memory</param>
+        /// <param name="flags">Post processing flags</param>
+        /// <param name="formatHint">A hint to Assimp to decide which importer to use to process the data</param>
+        /// <param name="propStore">Property store containing the config name-values, may be null.</param>
+        /// <returns>Pointer to the unmanaged data structure.</returns>
+        public IntPtr ImportFileFromMemory(IntPtr buffer, uint length, PostProcessSteps flags, String formatHint, IntPtr propStore)
+        {
+            LoadIfNotLoaded();
+
+            AssimpDelegates.aiImportFileFromMemoryWithPropertiesRaw func = m_impl.GetFunction<AssimpDelegates.aiImportFileFromMemoryWithPropertiesRaw>(AssimpFunctionNames.aiImportFileFromMemoryWithProperties, 
+                AssimpFunctionNames.aiImportFileFromMemoryWithPropertiesMarshalRaw);
+
+            return func(buffer, length, (uint)flags, formatHint, propStore);
+        }
+
+        /// <summary>
         /// Releases the unmanaged scene data structure. This should NOT be used for unmanaged scenes that were marshaled
         /// from the managed scene structure - only for scenes whose memory was allocated by the native library!
         /// </summary>
@@ -1044,6 +1064,43 @@ namespace Assimp.Unmanaged
 
         #region Version Info
 
+        private bool _isVersionRead = false;
+        private uint _versionMajor;
+        private uint _versionMinor;
+        private uint _versionRevision;
+
+        private bool _isVersion_5_1_or_newer;
+        internal bool IsVersion_5_1_or_newer
+        {
+            get
+            {
+                EnsureVersion();
+                return _isVersion_5_1_or_newer;
+            }
+        }
+
+        private void EnsureVersion()
+        {
+            if (_isVersionRead)
+                return;
+
+            LoadIfNotLoaded();
+
+            var majorFunc = m_impl.GetFunction<AssimpDelegates.aiGetVersionMajor>(AssimpFunctionNames.aiGetVersionMajor);
+            _versionMajor = majorFunc();
+
+            var minorFunc = m_impl.GetFunction<AssimpDelegates.aiGetVersionMinor>(AssimpFunctionNames.aiGetVersionMinor);
+            _versionMinor = minorFunc();
+
+            var revisionFunc = m_impl.GetFunction<AssimpDelegates.aiGetVersionRevision>(AssimpFunctionNames.aiGetVersionRevision);
+            _versionRevision = revisionFunc();
+
+            // Check if we have Assimp v5.1 or newer (there we need to use AiMesh_5_1 struct that has a new TextureCoordsNames field)
+            _isVersion_5_1_or_newer = _versionMajor > 5 || (_versionMajor == 5 && _versionMinor > 0);
+
+            _isVersionRead = true;
+        }
+
         /// <summary>
         /// Gets the Assimp legal info.
         /// </summary>
@@ -1063,29 +1120,23 @@ namespace Assimp.Unmanaged
         }
 
         /// <summary>
-        /// Gets the native Assimp DLL's minor version number.
-        /// </summary>
-        /// <returns>Assimp minor version number</returns>
-        public uint GetVersionMinor()
-        {
-            LoadIfNotLoaded();
-
-            AssimpDelegates.aiGetVersionMinor func = m_impl.GetFunction<AssimpDelegates.aiGetVersionMinor>(AssimpFunctionNames.aiGetVersionMinor);
-
-            return func();
-        }
-
-        /// <summary>
         /// Gets the native Assimp DLL's major version number.
         /// </summary>
         /// <returns>Assimp major version number</returns>
         public uint GetVersionMajor()
         {
-            LoadIfNotLoaded();
+            EnsureVersion();
+            return _versionMajor;
+        }
 
-            AssimpDelegates.aiGetVersionMajor func = m_impl.GetFunction<AssimpDelegates.aiGetVersionMajor>(AssimpFunctionNames.aiGetVersionMajor);
-
-            return func();
+        /// <summary>
+        /// Gets the native Assimp DLL's minor version number.
+        /// </summary>
+        /// <returns>Assimp minor version number</returns>
+        public uint GetVersionMinor()
+        {
+            EnsureVersion();
+            return _versionMinor;
         }
 
         /// <summary>
@@ -1094,11 +1145,8 @@ namespace Assimp.Unmanaged
         /// <returns>Assimp revision version number</returns>
         public uint GetVersionRevision()
         {
-            LoadIfNotLoaded();
-
-            AssimpDelegates.aiGetVersionRevision func = m_impl.GetFunction<AssimpDelegates.aiGetVersionRevision>(AssimpFunctionNames.aiGetVersionRevision);
-
-            return func();
+            EnsureVersion();
+            return _versionRevision;
         }
 
         /// <summary>
@@ -1170,6 +1218,20 @@ namespace Assimp.Unmanaged
     /// </summary>
     internal static class AssimpFunctionNames
     {
+        #region Marshal Versions
+
+        /// <summary>
+        /// Identifies an alternative delegate of the native version aiImportFileFromMemoryWithProperties:
+        /// Import file from native memory (IntPtr).
+        /// </summary>
+        public const string aiImportFileFromMemoryWithPropertiesMarshalRaw = "_raw";
+
+        /// <summary>
+        /// Identifies the default marshal delegate (NOTE: added for clarity, actual functions are overloaded)
+        /// </summary>
+        public const string defaultMarshalDelegate = "";
+
+        #endregion
 
         #region Import Function Names
 
@@ -1284,6 +1346,9 @@ namespace Assimp.Unmanaged
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl), AssimpFunctionName(AssimpFunctionNames.aiImportFileFromMemoryWithProperties)]
         public delegate IntPtr aiImportFileFromMemoryWithProperties(byte[] buffer, uint bufferLength, uint flags, [In, MarshalAs(UnmanagedType.LPStr)] String formatHint, IntPtr propStore);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl), AssimpFunctionName(AssimpFunctionNames.aiImportFileFromMemoryWithProperties)]
+        public delegate IntPtr aiImportFileFromMemoryWithPropertiesRaw(IntPtr buffer, uint bufferLength, uint flags, [In, MarshalAs(UnmanagedType.LPStr)] String formatHint, IntPtr propStore);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl), AssimpFunctionName(AssimpFunctionNames.aiReleaseImport)]
         public delegate void aiReleaseImport(IntPtr scene);
@@ -1561,12 +1626,12 @@ namespace Assimp.Unmanaged
             }
         }
 
-        public T GetFunction<T>(String functionName) where T : class
+        public T GetFunction<T>(String functionName, string version = "") where T : class
         {
-            return GetFunction(functionName, typeof(T)) as T;
+            return (T) GetFunction(functionName, typeof(T), version);
         }
 
-        public Object GetFunction(String functionName, Type type)
+        public Object GetFunction(String functionName, Type type, string version = "")
         {
             if(!LibraryLoaded || type == null || String.IsNullOrEmpty(functionName))
                 return null;
@@ -1581,13 +1646,13 @@ namespace Assimp.Unmanaged
 
             Delegate function;
 
-            if(!m_nameToUnmanagedFunction.TryGetValue(functionName, out function))
+            if(!m_nameToUnmanagedFunction.TryGetValue(functionName + version, out function))
             {
                 function = Marshal.GetDelegateForFunctionPointer(procAddr, type);
-                m_nameToUnmanagedFunction.Add(functionName, function);
+                m_nameToUnmanagedFunction.Add(functionName + version, function);
             }
 
-            return (Object) function;
+            return function;
         }
 
         public void Dispose()

@@ -124,7 +124,15 @@ namespace AssimpNet.Interop.Generator
 
             RemoveInteropClass(assemblyDef);
 
-            assemblyDef.Write(filePath, writerParams);
+            string destinationFileName = filePath + ".tmp";
+
+            assemblyDef.Write(destinationFileName, writerParams);
+            assemblyDef.Dispose();
+
+            if (System.IO.File.Exists(filePath))
+                System.IO.File.Delete(filePath);
+
+            System.IO.File.Move(destinationFileName, filePath);
 
             Console.WriteLine("Interop Generation complete.");
         }
@@ -296,7 +304,7 @@ namespace AssimpNet.Interop.Generator
         {
             //Make sure we import IntPtr::op_explicit(void*)
             MethodInfo opExplicitInfo = typeof(IntPtr).GetMethod("op_Explicit", new Type[] { typeof(void*) });
-            MethodReference opExplicitRef = method.Module.Import(opExplicitInfo);
+            MethodReference opExplicitRef = method.Module.ImportReference(opExplicitInfo);
 
             method.Body.Instructions.Clear();
             method.Body.InitLocals = true;
@@ -345,7 +353,7 @@ namespace AssimpNet.Interop.Generator
         {
             //Make sure we import IntPtr::op_explicit(void*)
             MethodInfo opExplicitInfo = typeof(IntPtr).GetMethod("op_Explicit", new Type[] { typeof(void*) });
-            MethodReference opExplicitRef = method.Module.Import(opExplicitInfo);
+            MethodReference opExplicitRef = method.Module.ImportReference(opExplicitInfo);
 
             method.Body.Instructions.Clear();
             method.Body.InitLocals = true;
