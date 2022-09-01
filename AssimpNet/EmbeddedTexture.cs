@@ -20,8 +20,8 @@
 * THE SOFTWARE.
 */
 
-using System;
 using Assimp.Unmanaged;
+using System;
 
 namespace Assimp
 {
@@ -44,182 +44,117 @@ namespace Assimp
 
         //Compressed textures only
         private byte[] m_compressedData;
-        private String m_compressedFormatHint;
+        private string m_compressedFormatHint;
 
-        /// <summary>
-        /// Gets if the texture is compressed or not.
-        /// </summary>
-        public bool IsCompressed
-        {
-            get
-            {
-                return m_isCompressed;
-            }
-        }
+        /// <summary>Gets if the texture is compressed or not.</summary>
+        public bool IsCompressed => m_isCompressed;
 
         /// <summary>
         /// Gets the width of the texture in pixels. Only valid for non-compressed textures.
         /// </summary>
-        public int Width
-        {
-            get
-            {
-                return m_width;
-            }
-        }
+        public int Width => m_width;
 
         /// <summary>
         /// Gets the height of the texture in pixels. Only valid for non-compressed textures.
         /// </summary>
-        public int Height
-        {
-            get
-            {
-                return m_height;
-            }
-        }
+        public int Height => m_height;
 
         /// <summary>
         /// Gets if the texture has non-compressed texel data. Only valid for non-compressed textures.
         /// </summary>
-        public bool HasNonCompressedData
-        {
-            get
-            {
-                return m_nonCompressedData != null || m_nonCompressedData.Length != 0;
-            }
-        }
+        public bool HasNonCompressedData => m_nonCompressedData != null || (uint)m_nonCompressedData.Length > 0U;
 
         /// <summary>
         /// Gets the size of the non-compressed texel data. Only valid for non-compressed textures.
         /// </summary>
-        public int NonCompressedDataSize
-        {
-            get
-            {
-                return (m_nonCompressedData == null) ? 0 : m_nonCompressedData.Length;
-            }
-        }
+        public int NonCompressedDataSize => m_nonCompressedData != null ? m_nonCompressedData.Length : 0;
 
         /// <summary>
         /// Gets the non-compressed texel data, the array is of size Width * Height. Only valid for non-compressed textures.
         /// </summary>
-        public Texel[] NonCompressedData
-        {
-            get
-            {
-                return m_nonCompressedData;
-            }
-        }
+        public Texel[] NonCompressedData => m_nonCompressedData;
 
         /// <summary>
         /// Gets if the embedded texture has compressed data. Only valid for compressed textures.
         /// </summary>
-        public bool HasCompressedData
-        {
-            get
-            {
-                return m_compressedData != null || m_compressedData.Length != 0;
-            }
-        }
+        public bool HasCompressedData => m_compressedData != null || (uint)m_compressedData.Length > 0U;
 
         /// <summary>
         /// Gets the size of the compressed data. Only valid for compressed textures.
         /// </summary>
-        public int CompressedDataSize
-        {
-            get
-            {
-                return (m_compressedData == null) ? 0 : m_compressedData.Length;
-            }
-        }
+        public int CompressedDataSize => m_compressedData != null ? m_compressedData.Length : 0;
 
         /// <summary>
         /// Gets the raw byte data representing the compressed texture. Only valid for compressed textures.
         /// </summary>
-        public byte[] CompressedData
-        {
-            get
-            {
-                return m_compressedData;
-            }
-        }
+        public byte[] CompressedData => m_compressedData;
 
         /// <summary>
         /// Gets the format hint to determine the type of compressed data. This hint
         /// is a three-character lower-case hint like "dds", "jpg", "png".
         /// </summary>
-        public String CompressedFormatHint
-        {
-            get
-            {
-                return m_compressedFormatHint;
-            }
-        }
+        public string CompressedFormatHint => m_compressedFormatHint;
 
-        /// <summary>
-        /// Texture original filename
-        /// </summary>
+        /// <summary>Texture original filename</summary>
         public string FileName { get; private set; }
 
         /// <summary>
-        /// Constructs a new instance of the <see cref="EmbeddedTexture"/> class. Should use only if
+        /// Constructs a new instance of the <see cref="T:Assimp.EmbeddedTexture" /> class. Should use only if
         /// reading from a native value.
         /// </summary>
-        public EmbeddedTexture()
-        {
-            m_isCompressed = false;
-        }
-
+        public EmbeddedTexture() => m_isCompressed = false;
 
         /// <summary>
-        /// Constructs a new instance of the <see cref="EmbeddedTexture"/> class. This creates a compressed
+        /// Constructs a new instance of the <see cref="T:Assimp.EmbeddedTexture" /> class. This creates a compressed
         /// embedded texture.
         /// </summary>
+        /// <param name="fileName">fileName</param>
         /// <param name="compressedFormatHint">The 3 character format hint.</param>
         /// <param name="compressedData">The compressed data.</param>
-        public EmbeddedTexture(String compressedFormatHint, byte[] compressedData)
+        public EmbeddedTexture(string fileName, string compressedFormatHint, byte[] compressedData)
         {
+            FileName = fileName;
             m_compressedFormatHint = compressedFormatHint;
             m_compressedData = compressedData;
-
             m_isCompressed = true;
             m_width = 0;
             m_height = 0;
-            m_nonCompressedData = null;
+            m_nonCompressedData = (Texel[])null;
         }
 
         /// <summary>
-        /// Constructs a new instance of the <see cref="EmbeddedTexture"/> class. This creates an uncompressed
+        /// Constructs a new instance of the <see cref="T:Assimp.EmbeddedTexture" /> class. This creates an uncompressed
         /// embedded texture.
         /// </summary>
+        /// <param name="fileName">fileName</param>
         /// <param name="width">Width of the texture</param>
         /// <param name="height">Height of the texture</param>
         /// <param name="uncompressedData">Color data</param>
-        /// <exception cref="ArgumentException">Thrown if the data size does not match width * height.</exception>
-        public EmbeddedTexture(int width, int height, Texel[] uncompressedData)
+        /// <exception cref="T:System.ArgumentException">Thrown if the data size does not match width * height.</exception>
+        public EmbeddedTexture(string fileName, int width, int height, Texel[] uncompressedData)
         {
+            FileName = fileName;
+
             m_width = width;
             m_height = height;
             m_nonCompressedData = uncompressedData;
 
-            if((m_width * m_height) == NonCompressedDataSize)
+            if (m_width * m_height == NonCompressedDataSize)
                 throw new ArgumentException("Texel data size does not match width * height.");
 
             m_isCompressed = false;
-            m_compressedFormatHint = null;
-            m_compressedData = null;
+            m_compressedFormatHint = (string)null;
+            m_compressedData = (byte[])null;
         }
+
 
         #region IMarshalable Implementation
 
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<EmbeddedTexture, AiTexture>.IsNativeBlittable
-        {
-            get { return true; }
-        }
+        bool IMarshalable<EmbeddedTexture, AiTexture>.IsNativeBlittable => true;
+
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -228,12 +163,12 @@ namespace Assimp
         /// <param name="nativeValue">Output native value</param>
         void IMarshalable<EmbeddedTexture, AiTexture>.ToNative(IntPtr thisPtr, out AiTexture nativeValue)
         {
-            nativeValue.FileName = new AiString(this.FileName);
+            nativeValue.FileName = new AiString(FileName);
 
             if (IsCompressed)
             {
-                nativeValue.Width = (uint) CompressedDataSize;
-                nativeValue.Height = 0;
+                nativeValue.Width = (uint)CompressedDataSize;
+                nativeValue.Height = 0U;
                 nativeValue.Data = IntPtr.Zero;
 
                 if (CompressedDataSize > 0)
@@ -241,8 +176,8 @@ namespace Assimp
             }
             else
             {
-                nativeValue.Width = (uint) m_width;
-                nativeValue.Height = (uint) m_height;
+                nativeValue.Width = (uint)m_width;
+                nativeValue.Height = (uint)m_height;
                 nativeValue.Data = IntPtr.Zero;
 
                 if (NonCompressedDataSize > 0)
@@ -252,13 +187,14 @@ namespace Assimp
             nativeValue.SetFormatHint(m_compressedFormatHint);
         }
 
+
         /// <summary>
         /// Reads the unmanaged data from the native value.
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
         void IMarshalable<EmbeddedTexture, AiTexture>.FromNative(ref AiTexture nativeValue)
         {
-            m_isCompressed = nativeValue.Height == 0;
+            m_isCompressed = nativeValue.Height == 0U;
 
             FileName = nativeValue.FileName.GetString();
             m_compressedFormatHint = nativeValue.GetFormatHint();
@@ -267,24 +203,28 @@ namespace Assimp
             {
                 m_width = 0;
                 m_height = 0;
-                m_nonCompressedData = null;
-                m_compressedData = null;
+                m_nonCompressedData = (Texel[])null;
+                m_compressedData = (byte[])null;
 
-                if (nativeValue.Width > 0 && nativeValue.Data != IntPtr.Zero)
-                    m_compressedData = MemoryHelper.FromNativeArray<byte>(nativeValue.Data, (int) nativeValue.Width);
+                if (nativeValue.Width <= 0U || !(nativeValue.Data != IntPtr.Zero))
+                    return;
+
+                m_compressedData = MemoryHelper.FromNativeArray<byte>(nativeValue.Data, (int)nativeValue.Width);
             }
             else
             {
-                m_compressedData = null;
-                m_nonCompressedData = null;
+                m_compressedData = (byte[])null;
+                m_nonCompressedData = (Texel[])null;
 
-                m_width = (int) nativeValue.Width;
-                m_height = (int) nativeValue.Height;
+                m_width = (int)nativeValue.Width;
+                m_height = (int)nativeValue.Height;
 
-                int size = m_width * m_height;
+                int length = m_width * m_height;
 
-                if(size > 0 && nativeValue.Data != IntPtr.Zero)
-                    m_nonCompressedData = MemoryHelper.FromNativeArray<Texel>(nativeValue.Data, size);
+                if (length <= 0 || !(nativeValue.Data != IntPtr.Zero))
+                    return;
+
+                m_nonCompressedData = MemoryHelper.FromNativeArray<Texel>(nativeValue.Data, length);
             }
         }
 
@@ -295,16 +235,18 @@ namespace Assimp
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
         public static void FreeNative(IntPtr nativeValue, bool freeNative)
         {
-            if(nativeValue == IntPtr.Zero)
+            if (nativeValue == IntPtr.Zero)
                 return;
 
             AiTexture aiTexture = MemoryHelper.Read<AiTexture>(nativeValue);
 
-            if(aiTexture.Width > 0 && aiTexture.Data != IntPtr.Zero)
+            if (aiTexture.Width > 0U && aiTexture.Data != IntPtr.Zero)
                 MemoryHelper.FreeMemory(aiTexture.Data);
 
-            if(freeNative)
-                MemoryHelper.FreeMemory(nativeValue);
+            if (!freeNative)
+                return;
+
+            MemoryHelper.FreeMemory(nativeValue);
         }
 
         #endregion

@@ -111,6 +111,11 @@ namespace Assimp.Unmanaged
         public IntPtr MetaData;
 
         /// <summary>
+        /// The name of the scene itself.
+        /// </summary>
+        public AiString Name;
+
+        /// <summary>
         /// void*, Private data do not touch!
         /// </summary>
         public IntPtr PrivateData;
@@ -523,6 +528,18 @@ namespace Assimp.Unmanaged
         /// Number of weights.
         /// </summary>
         public uint NumWeights;
+
+        /// <summary>
+        /// The bone armature node - used for skeleton conversion
+        /// you must enable aiProcess_PopulateArmatureData to populate this
+        /// </summary>
+        public IntPtr Armature;
+
+        /// <summary>
+        /// The bone node in the scene - used for skeleton conversion
+        /// you must enable aiProcess_PopulateArmatureData to populate this
+        /// </summary>
+        public IntPtr Node;
 
         /// <summary>
         /// VertexWeight*, array of vertex weights.
@@ -1196,12 +1213,12 @@ namespace Assimp.Unmanaged
         /// <summary>
         /// Min
         /// </summary>
-        public Vector2D Min;
+        public Vector3D Min;
 
         /// <summary>
         /// Max
         /// </summary>
-        public Vector2D Max;
+        public Vector3D Max;
     }
 
     #region Delegates

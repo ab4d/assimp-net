@@ -633,7 +633,6 @@ namespace Assimp
             nativeValue.Faces = IntPtr.Zero;
             nativeValue.Colors = new AiMeshColorArray();
             nativeValue.TextureCoords = new AiMeshTextureCoordinateArray();
-            nativeValue.TextureCoordsNames = IntPtr.Zero;
             nativeValue.NumUVComponents = new AiMeshUVComponentArray();
             nativeValue.PrimitiveTypes = m_primitiveType;
             nativeValue.MaterialIndex = (uint) m_materialIndex;
@@ -642,7 +641,8 @@ namespace Assimp
             nativeValue.NumFaces = (uint) FaceCount;
             nativeValue.NumAnimMeshes = (uint) MeshAnimationAttachmentCount;
             nativeValue.Method = (uint) 0;
-            nativeValue.AABB = new AiAABB();
+            nativeValue.AABB = new AiAABB();// { Min = new Vector2D(1, 2), Max = new Vector2D(4, 5, 6) };
+            nativeValue.TextureCoordsNames = IntPtr.Zero;
 
             if (nativeValue.NumVertices > 0)
             {

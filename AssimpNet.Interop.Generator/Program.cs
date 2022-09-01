@@ -32,7 +32,8 @@ using Mono.Collections.Generic;
 namespace AssimpNet.Interop.Generator
 {
     /// <summary>
-    /// Console program that patches AssimpNet.dll, by iterating over all types and finding stubs to replace with IL code. Original idea (and some of the IL code) credit goes to SharpDX, 
+    /// Console program that patches AssimpNet.dll, by iterating over all types and finding stubs to replace with IL code.
+    /// Original idea (and some of the IL code) credit goes to SharpDX, 
     /// the generator below is ported from the Tesla 3D engine project.
     /// </summary>
     class Program
@@ -124,15 +125,13 @@ namespace AssimpNet.Interop.Generator
 
             RemoveInteropClass(assemblyDef);
 
-            string destinationFileName = filePath + ".tmp";
+            string tempFile = Path.GetTempFileName();
 
-            assemblyDef.Write(destinationFileName, writerParams);
+            assemblyDef.Write(tempFile, writerParams);
             assemblyDef.Dispose();
 
-            if (System.IO.File.Exists(filePath))
-                System.IO.File.Delete(filePath);
-
-            System.IO.File.Move(destinationFileName, filePath);
+            File.Delete(filePath);
+            File.Copy(tempFile, filePath);
 
             Console.WriteLine("Interop Generation complete.");
         }

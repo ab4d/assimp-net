@@ -145,6 +145,8 @@ namespace Assimp
         {
             nativeValue.Name = new AiString(m_name);
             nativeValue.OffsetMatrix = m_offsetMatrix;
+            nativeValue.Armature = IntPtr.Zero;
+            nativeValue.Node = IntPtr.Zero;
             nativeValue.NumWeights = (uint) m_weights.Count;
             nativeValue.Weights = IntPtr.Zero;
 

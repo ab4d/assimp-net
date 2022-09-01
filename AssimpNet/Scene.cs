@@ -371,6 +371,7 @@ namespace Assimp
             nativeValue.Textures = IntPtr.Zero;
             nativeValue.Animations = IntPtr.Zero;
             nativeValue.MetaData = IntPtr.Zero;
+            nativeValue.Name = new AiString();
             nativeValue.PrivateData = IntPtr.Zero;
 
             nativeValue.NumMaterials = (uint) MaterialCount;
