@@ -1093,7 +1093,7 @@ namespace Assimp.Unmanaged
             var minorFunc = m_impl.GetFunction<AssimpDelegates.aiGetVersionMinor>(AssimpFunctionNames.aiGetVersionMinor);
             _versionMinor = minorFunc();
             
-            var patchFunc = m_impl.GetFunction<AssimpDelegates.aiGetVersionMinor>(AssimpFunctionNames.aiGetVersionPatch);
+            var patchFunc = m_impl.GetFunction<AssimpDelegates.aiGetVersionPatch>(AssimpFunctionNames.aiGetVersionPatch);
             _versionPatch = patchFunc();
 
             var revisionFunc = m_impl.GetFunction<AssimpDelegates.aiGetVersionRevision>(AssimpFunctionNames.aiGetVersionRevision);
