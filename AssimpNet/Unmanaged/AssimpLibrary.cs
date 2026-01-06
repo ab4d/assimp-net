@@ -1318,6 +1318,7 @@ namespace Assimp.Unmanaged
         public const String aiGetLegalString = "aiGetLegalString";
         public const String aiGetVersionMinor = "aiGetVersionMinor";
         public const String aiGetVersionMajor = "aiGetVersionMajor";
+        public const String aiGetVersionPatch = "aiGetVersionPatch";
         public const String aiGetVersionRevision = "aiGetVersionRevision";
         public const String aiGetCompileFlags = "aiGetCompileFlags";
 
@@ -1507,6 +1508,9 @@ namespace Assimp.Unmanaged
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl), AssimpFunctionName(AssimpFunctionNames.aiGetVersionMajor)]
         public delegate uint aiGetVersionMajor();
+        
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl), AssimpFunctionName(AssimpFunctionNames.aiGetVersionPatch)]
+        public delegate uint aiGetVersionPatch();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl), AssimpFunctionName(AssimpFunctionNames.aiGetVersionRevision)]
         public delegate uint aiGetVersionRevision();
