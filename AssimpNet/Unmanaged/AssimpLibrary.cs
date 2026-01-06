@@ -1067,6 +1067,7 @@ namespace Assimp.Unmanaged
         private bool _isVersionRead = false;
         private uint _versionMajor;
         private uint _versionMinor;
+        private uint _versionPatch;
         private uint _versionRevision;
 
         private bool _isVersion_5_1_or_newer;
@@ -1091,6 +1092,9 @@ namespace Assimp.Unmanaged
 
             var minorFunc = m_impl.GetFunction<AssimpDelegates.aiGetVersionMinor>(AssimpFunctionNames.aiGetVersionMinor);
             _versionMinor = minorFunc();
+            
+            var patchFunc = m_impl.GetFunction<AssimpDelegates.aiGetVersionMinor>(AssimpFunctionNames.aiGetVersionPatch);
+            _versionPatch = patchFunc();
 
             var revisionFunc = m_impl.GetFunction<AssimpDelegates.aiGetVersionRevision>(AssimpFunctionNames.aiGetVersionRevision);
             _versionRevision = revisionFunc();
@@ -1138,6 +1142,16 @@ namespace Assimp.Unmanaged
             EnsureVersion();
             return _versionMinor;
         }
+        
+        /// <summary>
+        /// Gets the native Assimp DLL's patch version number.
+        /// </summary>
+        /// <returns>Assimp patch version number</returns>
+        public uint GetVersionPatch()
+        {
+            EnsureVersion();
+            return _versionPatch;
+        }
 
         /// <summary>
         /// Gets the native Assimp DLL's revision version number.
@@ -1148,6 +1162,7 @@ namespace Assimp.Unmanaged
             EnsureVersion();
             return _versionRevision;
         }
+
 
         /// <summary>
         /// Gets the native Assimp DLL's current version number as "major.minor.revision" string. This is the
