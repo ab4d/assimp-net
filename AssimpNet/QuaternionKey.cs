@@ -43,15 +43,23 @@ namespace Assimp
         /// </summary>
         public Quaternion Value;
 
+        // Change added in 5.4.3 (17.7.2024) - https://github.com/assimp/assimp/commit/da281b7f482618c1d7c580b5e0c778c3f004f79d
+        /// <summary>
+        /// The interpolation setting of this key.
+        /// </summary>
+        public AnimInterpolation Interpolation;
+
         /// <summary>
         /// Constructs a new QuaternionKey.
         /// </summary>
         /// <param name="time">Time of the key.</param>
         /// <param name="rot">Quaternion rotation at the time frame.</param>
-        public QuaternionKey(double time, Quaternion rot)
+        /// <param name="interpolation">The interpolation setting of this key.</param>
+        public QuaternionKey(double time, Quaternion rot, AnimInterpolation interpolation = AnimInterpolation.AnimInterpolation_Linear)
         {
             Time = time;
             Value = rot;
+            Interpolation = interpolation;
         }
 
         /// <summary>

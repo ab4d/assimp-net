@@ -24,6 +24,17 @@ using System;
 
 namespace Assimp
 {
+    public enum AnimInterpolation {
+        AnimInterpolation_Step,
+
+        AnimInterpolation_Linear,
+
+        AnimInterpolation_Spherical_Linear,
+
+        AnimInterpolation_Cubic_Spline,
+    };
+
+
     /// <summary>
     /// Enumerates metadata data types.
     /// </summary>

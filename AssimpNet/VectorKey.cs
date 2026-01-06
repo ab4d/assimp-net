@@ -43,15 +43,23 @@ namespace Assimp
         /// </summary>
         public Vector3D Value;
 
+        // Change added in 5.4.3 (17.7.2024) - https://github.com/assimp/assimp/commit/da281b7f482618c1d7c580b5e0c778c3f004f79d
+        /// <summary>
+        /// The interpolation setting of this key.
+        /// </summary>
+        public AnimInterpolation Interpolation;
+
         /// <summary>
         /// Constructs a new VectorKey.
         /// </summary>
         /// <param name="time">The time of this key.</param>
         /// <param name="vector">The 3D vector value of this key.</param>
-        public VectorKey(double time, Vector3D vector)
+        /// <param name="interpolation">The interpolation setting of this key.</param>
+        public VectorKey(double time, Vector3D vector, AnimInterpolation interpolation = AnimInterpolation.AnimInterpolation_Linear)
         {
             Time = time;
             Value = vector;
+            Interpolation = interpolation;
         }
 
         /// <summary>
